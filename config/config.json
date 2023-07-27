@@ -1,0 +1,12 @@
+{
+  "screen": {
+    "width": 1280,
+    "height": 620,
+    "fps": 60
+  },
+  "paths": {
+    "buttons": "./assets/buttons",
+    "background": "./assets/background",
+    "character": "./assets/character"
+  }
+}
