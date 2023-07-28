@@ -6,9 +6,13 @@ from internal.player import Player
 
 
 class Level:
-    def __init__(self, screen: pygame.surface.Surface, cfg: dict[str, Any]):
+    def __init__(self, screen: pygame.surface.Surface, cfg: dict[str, Any], player, obstacles, name: str):
         self.screen = screen
         self.cfg = cfg
+        self.name = name
+
+        self.__font = pygame.font.SysFont(None, 60)
+        self.__text = self.__font.render(self.name, False, (255, 255, 255))
 
         # Parallax variables
         self.__ground_image = pygame.image.load(self.cfg.get("paths").get("background") + "/ground.png").convert_alpha()
@@ -27,34 +31,36 @@ class Level:
         self.__scroll = 0
         # -------------------------------------------
 
-        self.player = None
-        self.obstacles = None
+        self.player = player
+        self.obstacles = obstacles
 
         self.player_group = pygame.sprite.Group()
         self.obstacles_group = pygame.sprite.Group()
 
         self.__init = False
 
-    def start(self, player: Player, obstacles: list) -> None:
+    def start(self) -> None:
         self.__draw_bg()
         self.__draw_ground()
 
-        if not self.__init:
-            self.player_group.add(player)
+        self.screen.blit(self.__text, (10, 10))
 
-            for obstacle in obstacles:
+        if not self.__init:
+            self.player_group.add(self.player)
+
+            for obstacle in self.obstacles:
                 self.obstacles_group.add(obstacle)
 
             self.__init = True
-
-            self.player = player
-            self.obstacles = obstacles
 
         self.player_group.draw(self.screen)
         self.obstacles_group.draw(self.screen)
 
         self.player_group.update()
         self.obstacles_group.update()
+
+    def reset(self) -> None:
+        self.__init = False
 
     def handle_key(self, key: pygame.key.ScancodeWrapper) -> None:
         if abs(self.__scroll) > self.__bg_width:

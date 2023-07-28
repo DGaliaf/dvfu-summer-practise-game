@@ -7,6 +7,7 @@
   "paths": {
     "buttons": "./assets/buttons",
     "background": "./assets/background",
-    "character": "./assets/character"
+    "character": "./assets/character",
+    "obstacles": "./assets/obstacles"
   }
 }
