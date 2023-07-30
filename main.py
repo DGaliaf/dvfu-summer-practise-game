@@ -1,9 +1,12 @@
-from internal import Game
-from pkg import getConfig
+from internal.game import Game
+from pkg import get_config
 
+
+#TODO: SFX, End Menu, Score System, Increasing difficulty, *Double Jump
+# * - not necessary
 
 def main():
-    cfg = getConfig("./config/config.json")
+    cfg = get_config("./config/config.json")
 
     game = Game(cfg)
     game.start()
