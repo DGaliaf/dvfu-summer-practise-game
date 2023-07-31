@@ -140,6 +140,8 @@ class Player(pygame.sprite.Sprite):
         return self.__state
 
     def reset(self):
+        self.__state = "IDLE"
+        self.__jumping = False
         self.is_alive = True
         self.rect.center = (100, self.cfg["screen"]["height"] - 100)
 

@@ -86,6 +86,11 @@ class Level:
             self.__scroll -= 5
 
     def reset(self):
+        obstacles = self.__get_obstacles()
+
+        self.obstacles_group.empty()
+        self.obstacles_group.add([obstacles[random.randint(0, len(obstacles) - 1)] for _ in range(0, self.max_obstacles)])
+
         self.current_score = 0
         self.difficulty = 1
 

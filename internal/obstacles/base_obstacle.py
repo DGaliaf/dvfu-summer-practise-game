@@ -28,10 +28,16 @@ class BaseObstacle(pygame.sprite.Sprite):
         self.rect.x -= self.__speed
 
     def get_random_position(self) -> (int, int):
-        x = random.randint(230, 600)
+        offset_y = random.randint(230, 600)
 
-        return (random.randint(self.cfg["screen"]["width"] + 200, self.cfg["screen"]["width"] + random.randint(400, 800)),
-                random.randint(self.cfg["screen"]["height"] - x, self.cfg["screen"]["height"] - 230))
+        position_x = random.randrange(self.cfg["screen"]["width"] + 200,
+                                      self.cfg["screen"]["width"] + random.randint(900, 1600),
+                                      random.randint(100, 400))
+        position_y = random.randrange(self.cfg["screen"]["height"] - offset_y,
+                                      self.cfg["screen"]["height"] - 200,
+                                      random.randint(20, 100))
+
+        return (position_x, position_y)
 
     def reset(self) -> None:
         self.rect.center = (self._x, self._y)
