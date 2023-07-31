@@ -4,7 +4,7 @@ from typing import Any
 import pygame
 
 from internal.obstacles import BaseObstacle, Firebolt, Iceball, Waterball, Fire
-from internal.player import Player
+from internal.player import Player, get_best_score, write_best_score
 
 
 class Level:
@@ -12,6 +12,9 @@ class Level:
         self.screen = screen
         self.cfg = cfg
 
+        self.__ui_image = pygame.image.load(self.cfg.get("paths").get("assets") + "/ui.png").convert_alpha()
+        self.__ui_image = pygame.transform.scale(self.__ui_image, (self.cfg.get("screen").get("width"),
+                                                                   self.cfg.get("screen").get("height")))
         # Parallax
         self.__ground_image = pygame.image.load(self.cfg.get("paths").get("background") + "/ground.png").convert_alpha()
         self.__ground_width = self.__ground_image.get_width()
@@ -30,6 +33,11 @@ class Level:
         # -------------------------------------------
 
         self.player = player
+        self.current_score = 0
+        self.best_score = int(get_best_score(self.cfg))
+
+        self.difficulty = 1
+        self.multiplier = 0.00001
 
         self.player_group = pygame.sprite.Group()
         self.obstacles_group = pygame.sprite.Group()
@@ -38,6 +46,7 @@ class Level:
 
     def start(self) -> None:
         self.__draw_bg()
+        self.__draw_ui()
         self.__draw_ground()
 
         if len(self.player_group.sprites()) == 0:
@@ -48,8 +57,20 @@ class Level:
 
             self.obstacles_group.add(obstacles[random.randint(0, len(obstacles) - 1)])
 
+        if pygame.sprite.spritecollideany(self.player, self.obstacles_group):
+            self.player.is_alive = False
+
+            if int(self.current_score) > self.best_score:
+                write_best_score(self.cfg, int(self.current_score))
+                self.best_score = int(get_best_score(self.cfg))
+
+            self.reset()
+
         self.player_group.draw(self.screen)
         self.obstacles_group.draw(self.screen)
+
+        self.current_score += ((self.difficulty-1) * 10 if self.difficulty <= 1000 else 1000)
+        self.difficulty += self.multiplier
 
         self.player_group.update()
         self.obstacles_group.update()
@@ -64,6 +85,10 @@ class Level:
         if key[pygame.K_a] and self.__scroll > 0:
             self.__scroll -= 5
 
+    def reset(self):
+        self.current_score = 0
+        self.difficulty = 1
+
     def __get_obstacles(self) -> list[BaseObstacle]:
         return [
                 Firebolt(self.cfg),
@@ -71,6 +96,20 @@ class Level:
                 Waterball(self.cfg),
                 Fire(self.cfg)
             ]
+
+    def __draw_ui(self):
+        font = pygame.font.Font(self.cfg.get("paths").get("assets") + "/font.ttf", 45)
+
+        print(self.current_score)
+
+        best_score = font.render(str(int(self.best_score)), False, (253, 198, 137))
+        current_score = font.render(str(int(self.current_score)), False, (253, 198, 137))
+        difficulty = font.render(str(int(self.difficulty)), False, (253, 198, 137))
+
+        self.screen.blit(self.__ui_image, (0, 0))
+        self.screen.blit(best_score, (1015, 20))
+        self.screen.blit(current_score, (140, 20))
+        self.screen.blit(difficulty, (635, 31))
 
     def __draw_bg(self) -> None:
         for x in range(5):

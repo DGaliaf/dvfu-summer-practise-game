@@ -8,7 +8,7 @@ class Waterball(BaseObstacle):
     def __init__(self, cfg: dict[str, Any]):
         super().__init__(cfg)
 
-        self.__x, self.__y = self.get_random_position()
+        self._x, self._y = self.get_random_position()
 
         self.__total_frames = 5
         self.__current_frame = 0
@@ -18,7 +18,7 @@ class Waterball(BaseObstacle):
 
         self.image = self._frames[self.__current_frame]
         self.rect = self.image.get_rect()
-        self.rect.center = (self.__x, self.__y)
+        self.rect.center = (self._x, self._y)
 
     def load_frames(self) -> None:
         for i in range(1, self.__total_frames+1):

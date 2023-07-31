@@ -37,14 +37,20 @@ class Player(pygame.sprite.Sprite):
         """ -------------------------- """
 
         self.__state = "IDLE"
+        self.is_alive = True
 
+        self.run_sound = pygame.mixer.Sound(self.cfg.get("paths").get("sfx") + "/step.wav")
+        self.run_sound.set_volume(self.cfg.get("game").get("sound").get("effects"))
+        self.__speed = 5
+        self.__dir_x = 1
+
+        self.__jump_sound = pygame.mixer.Sound(self.cfg.get("paths").get("sfx") + "/jump.wav")
+        self.__jump_sound.set_volume(self.cfg.get("game").get("sound").get("effects"))
+        self.__jump_sound_played = False
         self.__jumping = False
         self.__y_gravity = 0.6
         self.__jump_height = 19
         self.__y_velocity = self.__jump_height
-
-        self.__speed = 5
-        self.__dir_x = 1
 
         self.image = self.__frames.get("IDLE")[self.__current_idle_frame]
         self.rect = self.image.get_rect()
@@ -130,12 +136,25 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = prev_x
         self.rect.y = prev_y
 
+    def get_state(self) -> str:
+        return self.__state
+
+    def reset(self):
+        self.is_alive = True
+        self.rect.center = (100, self.cfg["screen"]["height"] - 100)
+
     def __jump(self):
         if self.__jumping:
+            if not self.__jump_sound_played:
+                self.run_sound.stop()
+                self.__jump_sound.play()
+                self.__jump_sound_played = True
+
             self.rect.y -= self.__y_velocity
             self.__y_velocity -= self.__y_gravity
             if self.__y_velocity < -self.__jump_height:
                 self.__jumping = False
+                self.__jump_sound_played = False
                 self.__y_velocity = self.__jump_height
                 self.rect.y = (self.cfg["screen"]["height"] - 145)
 

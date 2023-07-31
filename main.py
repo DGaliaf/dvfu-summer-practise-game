@@ -2,7 +2,7 @@ from internal.game import Game
 from pkg import get_config
 
 
-#TODO: SFX, End Menu, Score System, Increasing difficulty, *Double Jump
+#TODO: End Menu, Improve spawn
 # * - not necessary
 
 def main():

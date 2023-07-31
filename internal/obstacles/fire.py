@@ -11,7 +11,8 @@ class Fire(BaseObstacle):
     def __init__(self, cfg: dict[str, Any]):
         super().__init__(cfg)
 
-        self.__x, _ = self.get_random_position()
+        self._x, _ = self.get_random_position()
+        self._y = self.cfg.get("screen").get("height") - 88
 
         self.__total_fire_frames = 8
         self.__current_fire_frame = 0
@@ -22,7 +23,7 @@ class Fire(BaseObstacle):
 
         self.image = self._frames.get(self.__random_fire)[self.__current_fire_frame]
         self.rect = self.image.get_rect()
-        self.rect.center = (self.__x, self.cfg.get("screen").get("height") - 88)
+        self.rect.center = (self._x, self._y)
 
     def load_frames(self) -> None:
         for i in range(1, self.__total_fire_frames + 1):

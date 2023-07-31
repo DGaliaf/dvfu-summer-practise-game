@@ -14,8 +14,10 @@ class BaseObstacle(pygame.sprite.Sprite):
 
         self._frames = None
 
+        self._x, self._y = 0, 0
+
         self.image = None
-        self.rect = None
+        self.rect: pygame.rect.Rect = None
 
         self.__speed = random.randrange(2, 4)
 
@@ -30,6 +32,9 @@ class BaseObstacle(pygame.sprite.Sprite):
 
         return (random.randint(self.cfg["screen"]["width"] + 200, self.cfg["screen"]["width"] + random.randint(400, 800)),
                 random.randint(self.cfg["screen"]["height"] - x, self.cfg["screen"]["height"] - 230))
+
+    def reset(self) -> None:
+        self.rect.center = (self._x, self._y)
 
     @abstractmethod
     def load_frames(self) -> (list | dict, pygame.Surface):
